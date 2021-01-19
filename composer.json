@@ -1,0 +1,21 @@
+{
+    "name": "alexvkokin/telegram-bot-app",
+    "description": "Инструментарий для создания Телеграм бот приложения",
+    "authors": [
+        {
+            "name": "alexk00",
+            "email": "alexvkokin@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Tbot\\Base\\": "src/app/",
+            "Tbot\\Message\\": "src/message/"
+        }
+    }
+}
