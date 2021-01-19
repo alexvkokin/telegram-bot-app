@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tbot\App;
+namespace Tbot\TestApp;
 
 
 use Tbot\Base\Controller;
