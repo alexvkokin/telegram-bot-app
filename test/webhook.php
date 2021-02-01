@@ -3,9 +3,8 @@
  * Данный скрипт является примером Webhook
  */
 
-use tbots\schedule\controllers\StartController;
-use tbots\schedule\map\AppKeyboardMap;
-use yii\helpers\HtmlPurifier;
+use Tbot\TestApp\AppKeyboardMap;
+use Tbot\TestApp\StartController;
 
 $tbotKey = 'Ваш BOT API ключ';
 
