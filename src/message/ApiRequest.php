@@ -10,7 +10,7 @@ class ApiRequest
      * ApiRequest constructor.
      * @param string $token
      */
-	public function __construct(string $token)
+	public function __construct($token)
     {
         $this->token = $token;
     }
@@ -21,7 +21,7 @@ class ApiRequest
      * @param null|array $params <p>Дополнительные параметры передаваемые к api</p>
      * @return array
      */
-	protected function query(string $method, array $params = null) : array
+	protected function query($method, $params = null)
 	{
 		$url = "{$this->url_prefix}";
 
@@ -52,7 +52,7 @@ class ApiRequest
      * @param int|null $limit
      * @return array
      */
-	public function getUpdates(int $chat_id, $offset = null, int $limit = null) : array
+	public function getUpdates($chat_id, $offset = null, $limit = null)
 	{
 		$result = [];
 		$params = [];
@@ -85,16 +85,19 @@ class ApiRequest
      * @param int $message_id <p>Уникальный id сообщения которое необходимо изменить</p>
      * @param string $text <p>Текст сообщения на которое нужно заменить</p>
      * @param string $parse_mode <p>Тип форматирования текста:<b>html</b>, <b>markdown</b></p>
+     * @param array|null $reply_markup <p>Массив состоящий из параметров для вывода кнопок у пользователя бота</p>
      * @return array|false
      */
-	public function editMessage(int $chat_id, int $message_id, string $text, string $parse_mode = '')
+	public function editMessage($chat_id, $message_id, $text, $parse_mode = '', $reply_markup = null)
 	{
 		if($chat_id && $message_id && $text){
+            $encodedKeyboard = (!empty($reply_markup)) ? json_encode($reply_markup) : '';
 			return  $this->query('editMessageText', [
 				'message_id' => $message_id,
 				'chat_id' => $chat_id,
 				'text' => $text,
 				'parse_mode' => $parse_mode,
+				'reply_markup' => $encodedKeyboard,
 			]);
 		}
 		
@@ -108,7 +111,7 @@ class ApiRequest
      * @param string|null $parse_mode <p>Тип форматирования текста:<b>html</b>, <b>markdown</b></p>
      * @return array|false
      */
-	public function sendMessage(int $chat_id, string $text, string $parse_mode = null)
+	public function sendMessage($chat_id, $text, $parse_mode = null)
 	{
 		if($chat_id && $text){
 			return $this->query('sendMessage', [
@@ -124,15 +127,15 @@ class ApiRequest
     /**
      * Метод отправляет запрос к api телеграм бот на <b>установку кнопок</b> для указанного пользователя
      * @param int $chat_id <p>Уникальный id чата пользователя </p>
-     * @param array $keyboard <p>Массив состоящий из параметров для вывода кнопок у пользователя бота</p>
+     * @param array $reply_markup <p>Массив состоящий из параметров для вывода кнопок у пользователя бота</p>
      * @param string $text <p>Текст</p>
      * @param string $parse_mode <p>Тип форматирования текста: <b>html</b>, <b>markdown</b></p>
      * @return array|false
      */
-	public function sendButtons(int $chat_id, array $keyboard, string $text = 'setButton', string $parse_mode = '')
+	public function sendButtons($chat_id, $reply_markup, $text = 'setButton', $parse_mode = '')
 	{
-		if($chat_id && $keyboard){
-			$encodedKeyboard = json_encode($keyboard);
+		if($chat_id && $reply_markup){
+			$encodedKeyboard = json_encode($reply_markup);
 			return $this->query('sendMessage', [
 				'chat_id' => $chat_id,
 				'reply_markup' => $encodedKeyboard,
@@ -150,7 +153,7 @@ class ApiRequest
      * @param string $video_url <p>URL на видео, которое нужно передать </p>
      * @return array|false
      */
-	public function sendVideo(int $chat_id, string $video_url)
+	public function sendVideo($chat_id, $video_url)
 	{
 		if($chat_id && $video_url){
 			return $this->query('sendVideo', [

@@ -11,14 +11,14 @@ class Callback extends Message implements IKeyboard
 
 	/**
      * Получить message_id
-     * @return string|bool
+     * @return string
      */
 	public function getMessageId()
 	{
         if (isset($this->data['message']['text'])) {
             return $this->data['callback_query']['message']['message_id'];
         }
-		return false;
+		return '';
 	}
 
 
@@ -27,7 +27,7 @@ class Callback extends Message implements IKeyboard
      * @return string
      * Возвращает массив вида ["controller"=>"account","action"=>"edit',"params"=>["id"=>1]]
      */
-	public function getCommand() : string
+	public function getCommand()
 	{
 		return $this->data['callback_query']['data'];
 	}
@@ -37,7 +37,7 @@ class Callback extends Message implements IKeyboard
      * Получить пользователя отправителя
      * @return string
      */
-	public function getChatId() : string
+	public function getChatId()
 	{
 		return $this->data['callback_query']['from']['id'];
 	}
@@ -45,22 +45,21 @@ class Callback extends Message implements IKeyboard
 
 	/**
      * Текст сообщения
-     * @return string/boolean
+     * @return string
      */
 	public function getText()
 	{
-		$text = false;
 		if(isset($this->data['callback_query']['message']['text'])){
-			$text = $this->data['callback_query']['message']['text'];
+			return $this->data['callback_query']['message']['text'];
 		}
-		return $text;
+		return '';
 	}
 
     /**
      * Устанавливаем текст сообщения
      * @param string $value
      */
-    public function setText(string $value)
+    public function setText($value)
     {
         $this->data['message']['text'] = $value;
     }

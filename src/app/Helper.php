@@ -13,7 +13,7 @@ class Helper
      * @param string $action <p>Экшен для которого нужно собрать кнопки</p>
      * @return array
      */
-    public static function keyboard(array $keyboardMap, string $controller, string $action)
+    public static function keyboard($keyboardMap, $controller, $action)
     {
         // когда просматриваю массив надо смотреть принадлежит ли контроллер текепму классу
         $items = [];
@@ -36,7 +36,7 @@ class Helper
      * @param string $str
      * @return mixed
      */
-    public static function jsonDecode(string $str)
+    public static function jsonDecode($str)
     {
         //print $str;
         $arr = json_decode($str, true);

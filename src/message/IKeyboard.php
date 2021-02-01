@@ -7,5 +7,5 @@ namespace Tbot\Message;
  */
 interface IKeyboard
 {
-    public function getCommand() : string;
+    public function getCommand();
 }

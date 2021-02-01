@@ -2,6 +2,7 @@
 namespace Tbot\Base;
 
 use Tbot\Message\IKeyboard;
+use Tbot\Message\IMessage;
 use Tbot\Message\Keyboard;
 use Tbot\Message\Message;
 use Tbot\Message\Callback;
@@ -36,7 +37,7 @@ class Controller
      * @param string $token <p>Ключ для бота</p>
      * @param null|array $keyboardMap <p>Переменная содержит описание кнопок под полем ввода</p>
      */
-    public function __construct($message, string $token, array $keyboardMap = null)
+    public function __construct($message, $token, array $keyboardMap = null)
     {
         if (!empty($token)) {
             $this->token = $token;
@@ -64,9 +65,9 @@ class Controller
      * создается экземпляр данного контроллера, который наследует все поля от стартового контроллера
      * @return bool
      */
-    public function run() : bool
+    public function run()
     {
-        if ($this->message instanceof IKeyboard)
+        if ($this->message instanceof Message)
         {
             list($controller, $action) = KeyboardMap::getControllerAction(static::$keyboardMap, $this->message);
 

@@ -24,8 +24,8 @@ class Message implements IMessage
      */
 	protected $data_raw;
 
-	
-	/**
+
+    /**
      * Метод принимает полученное сообщение от телеграм бота и возвращает объект класса к типу которого относится данное сообщение<br>
      * <b>ВАЖНО: перед отправление данных обязательно пропустить их через санитизатор, чтобы устранить уязвимый код, например HTMLPurifier</b>
      * @param string $data_raw <p>Сообщение полученное от бота в виде строки JSON формата </p>
@@ -34,9 +34,9 @@ class Message implements IMessage
      * что это сообщение типа Keyboard</p>
      * @return Text|Keyboard|Callback|bool
      */
-	public static function get(string $data_raw, array $keyboardMap = null)
+	public static function get($data_raw, $keyboardMap = null)
 	{
-	    if ($data_raw) {
+	    if (!empty($data_raw)) {
 
             $data = Helper::jsonDecode($data_raw);
 
@@ -70,14 +70,15 @@ class Message implements IMessage
 		
 		return false;
 	}
-	
-	
+
+
 	/**
      * Конструктор
-     * @param string $data <p>Сообщение из телеграм бота в виде строки</p>
+     * @param string $data
+     * <p>Сообщение из телеграм бота в виде строки</p>
      * @return boolean
      */
-	public function __construct(string $data)
+	public function __construct($data)
 	{
 	    if ($data) {
             $this->data_raw = $data;
@@ -94,7 +95,7 @@ class Message implements IMessage
      * @return string
      */
 	public function getMessageId()
-	{
+    {
 		return $this->data['message']['message_id'];
 	}
 
@@ -103,7 +104,7 @@ class Message implements IMessage
      * Получить пользователя отправителя
      * @return string
      */
-	public function getChatId() : string
+	public function getChatId()
 	{
 		return $this->data['message']['from']['id'];
 	}
@@ -111,11 +112,11 @@ class Message implements IMessage
 	
 	/**
      * Текст сообщения
-     * @return string|boolean
+     * @return string
      */
 	public function getText()
 	{
-		$text = false;
+		$text = '';
 		if(isset($this->data['message']['text'])){
 			$text = $this->data['message']['text'];
 		}
@@ -125,9 +126,8 @@ class Message implements IMessage
 	/**
      * Устанавливаем текст сообщения
      * @param string $value
-     * @return bool
      */
-	public function setText(string $value)
+	public function setText($value)
 	{
         $this->data['message']['text'] = $value;
 	}

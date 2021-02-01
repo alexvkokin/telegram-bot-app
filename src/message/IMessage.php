@@ -6,10 +6,10 @@ namespace Tbot\Message;
  */
 interface IMessage
 {
-   public function __construct(string $data);
+   public function __construct($data);
    public function getMessageId();
    public function getChatId();
    public function getDataRaw();
    public function getText();
-   public function setText(string $value);
+   public function setText($value);
 }

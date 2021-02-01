@@ -4,6 +4,7 @@ namespace Tbot\Base;
 
 use Tbot\Message\Callback;
 use Tbot\Message\IKeyboard;
+use Tbot\Message\IMessage;
 use Tbot\Message\InlineKeyboard;
 use Tbot\Message\Keyboard;
 use Tbot\Message\Message;
@@ -75,15 +76,14 @@ class KeyboardMap
      * Пример<br>
      * list($controller, $action) = KeyboardMap::getControllerAction(static::$keyboardMap, $command);
      * @param array $keyboardMap <p>Карта кнопок и команд</p>
-     * @param IKeyboard $message <p>Объект сообщения полученного от бота</p>
+     * @param Message $message <p>Объект сообщения полученного от бота</p>
      * @return array|false<p>
      * Результатом будет массив состоящий из трех элементов<br>
      * [0 => controllerName, 1 => actionName, 2 => params]
      * </p>
      */
-    public static function getControllerAction(array $keyboardMap, IKeyboard $message)
+    public static function getControllerAction(array $keyboardMap, Message $message)
     {
-
         if ($message instanceof Callback) {
             $items = explode("|", $message->getCommand());
             if (2 <= count($items)) {
@@ -98,20 +98,35 @@ class KeyboardMap
                 if (!empty($controller_data)) {
                     foreach ($controller_data as $action_key => $action_data) {
 
-                        if (!empty($action_data['setButton'])){
-                            foreach ($action_data['setButton'] as $button) {
-                                if($message->getCommand() == static::getCommand($button, 'button')){
-                                    return [
-                                        static::backSlashesPathController($button['controller']),
-                                        $button['action'],
-                                    ];
+                        if ($message instanceof IKeyboard)
+                        {
+                            if (!empty($action_data['setButton'])){
+                                foreach ($action_data['setButton'] as $button) {
+                                    if($message->getCommand() == static::getCommand($button, 'button')){
+                                        return [
+                                            static::backSlashesPathController($button['controller']),
+                                            $button['action'],
+                                        ];
+                                    }
+                                }
+                            }
+
+                            if (!empty($action_data['inline'])){
+                                foreach ($action_data['inline'] as $inline) {
+                                    if($message->getCommand() == static::getCommand($inline, 'inline')){
+                                        return [
+                                            static::backSlashesPathController($controller_key),
+                                            $action_key,
+                                        ];
+                                    }
                                 }
                             }
                         }
 
-                        if (!empty($action_data['inline'])){
-                            foreach ($action_data['inline'] as $inline) {
-                                if($message->getCommand() == static::getCommand($inline, 'inline')){
+                        if ($message instanceof IMessage)
+                        {
+                            if (!empty($action_data['message'])) {
+                                if (get_class($message) == static::backSlashesPathController($action_data['message'])) {
                                     return [
                                         static::backSlashesPathController($controller_key),
                                         $action_key,
@@ -119,6 +134,7 @@ class KeyboardMap
                                 }
                             }
                         }
+
                     }
                 }
             }
@@ -132,7 +148,7 @@ class KeyboardMap
      * @param string $str
      * @return string
      */
-    public static function backSlashesPathController(string $str)
+    public static function backSlashesPathController($str)
     {
         return str_replace('/', '\\', $str);
     }
@@ -142,7 +158,7 @@ class KeyboardMap
      * @param string $str
      * @return string
      */
-    public static function rightSlashesPathController(string $str)
+    public static function rightSlashesPathController($str)
     {
         return str_replace('\\', '/', $str);
     }
@@ -193,7 +209,7 @@ class KeyboardMap
      * </p>
      * @return false|string
      */
-    public static function getCommand(array $keyboard, string $type)
+    public static function getCommand(array $keyboard, $type)
     {
         if ($type == 'button' && !empty($keyboard['icon']) && !empty($keyboard['text'])) {
             return trim(hex2bin($keyboard['icon']) . ' ' . $keyboard['text']);
