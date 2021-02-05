@@ -31,7 +31,7 @@ class ProfileController extends Controller
                 [
                     [
                         "text" => "Вывести мои данные",
-                        "callback_data" => "Tbot/App/StartController|actionStart|id=5|parent_id=1",
+                        "callback_data" => "profileGet|id=5|parent_id=1",
                     ],
                 ]
             ]

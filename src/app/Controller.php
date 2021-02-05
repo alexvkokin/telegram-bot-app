@@ -69,13 +69,13 @@ class Controller
     {
         if ($this->message instanceof Message)
         {
-            list($controller, $action) = KeyboardMap::getControllerAction(static::$keyboardMap, $this->message);
+            list($controller, $action, $callbackParams) = KeyboardMap::getControllerAction(static::$keyboardMap, $this->message);
 
             // Запуск
             if ($controller && class_exists($controller)) {
                 $class_run =  new $controller($this->message, $this->token);
                 if ($action && method_exists($class_run, $action)) {
-                    $class_run->$action();
+                    $class_run->$action($callbackParams);
                     return true;
                 }
             }

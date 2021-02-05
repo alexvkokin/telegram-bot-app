@@ -21,7 +21,7 @@ class AppKeyboardMap extends KeyboardMap
                 "inline" => [
                     ["command" => '/goodluck']
                 ]
-            ]
+            ],
         ],
         'Tbot/TestApp/ProfileController' => [
             'actionIndex' => [
@@ -31,7 +31,8 @@ class AppKeyboardMap extends KeyboardMap
                     ["icon" => 'E29780', "text" => 'Назад', "controller" => "Tbot/TestApp/StartController", "action" => "actionStart"],
                 ],
                 "inline" => [
-                    ["command" => '/profile']
+                    ["command" => '/profile'],
+                    ["callback" => 'profileGet']
                 ]
             ]
         ],

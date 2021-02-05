@@ -84,58 +84,67 @@ class KeyboardMap
      */
     public static function getControllerAction(array $keyboardMap, Message $message)
     {
-        if ($message instanceof Callback) {
-            $items = explode("|", $message->getCommand());
-            if (2 <= count($items)) {
-                return [
-                    static::backSlashesPathController(array_shift($items)),
-                    array_shift($items),
-                ];
-            }
-        }
-        else {
-            foreach ($keyboardMap as $controller_key => $controller_data) {
-                if (!empty($controller_data)) {
-                    foreach ($controller_data as $action_key => $action_data) {
+        foreach ($keyboardMap as $controller_key => $controller_data) {
+            if (!empty($controller_data)) {
+                foreach ($controller_data as $action_key => $action_data) {
 
-                        if ($message instanceof IKeyboard)
-                        {
-                            if (!empty($action_data['setButton'])){
-                                foreach ($action_data['setButton'] as $button) {
-                                    if($message->getCommand() == static::getCommand($button, 'button')){
-                                        return [
-                                            static::backSlashesPathController($button['controller']),
-                                            $button['action'],
-                                        ];
-                                    }
-                                }
-                            }
-
-                            if (!empty($action_data['inline'])){
-                                foreach ($action_data['inline'] as $inline) {
-                                    if($message->getCommand() == static::getCommand($inline, 'inline')){
-                                        return [
-                                            static::backSlashesPathController($controller_key),
-                                            $action_key,
-                                        ];
-                                    }
-                                }
-                            }
-                        }
-
-                        if ($message instanceof IMessage)
-                        {
-                            if (!empty($action_data['message'])) {
-                                if (get_class($message) == static::backSlashesPathController($action_data['message'])) {
+                    if ($message instanceof IKeyboard)
+                    {
+                        if (!empty($action_data['setButton'])){
+                            foreach ($action_data['setButton'] as $button) {
+                                if($message->getCommand() == static::getCommand($button, 'button')){
                                     return [
-                                        static::backSlashesPathController($controller_key),
-                                        $action_key,
+                                        static::backSlashesPathController($button['controller']),
+                                        $button['action'],
+                                        []
                                     ];
                                 }
                             }
                         }
 
+
+                        if (!empty($action_data['inline'])){
+                            foreach ($action_data['inline'] as $inline_key=>$inline)
+                            {
+                                if (!empty($inline['command'])) {
+                                    if ($message->getCommand() == static::getCommand($inline, 'command')) {
+                                        return [
+                                            static::backSlashesPathController($controller_key),
+                                            $action_key,
+                                            []
+                                        ];
+                                    }
+                                }
+                                else if (!empty($inline['callback'])) {
+                                    $items = explode("|", $message->getCommand());
+                                    $command = array_shift($items);
+                                    if ($command == static::getCommand($inline, 'callback')) {
+                                        return [
+                                            static::backSlashesPathController($controller_key),
+                                            $action_key,
+                                            $items
+                                        ];
+                                    }
+                                }
+
+                            }
+                        }
+
                     }
+
+                    if ($message instanceof IMessage)
+                    {
+                        if (!empty($action_data['message'])) {
+                            if (get_class($message) == static::backSlashesPathController($action_data['message'])) {
+                                return [
+                                    static::backSlashesPathController($controller_key),
+                                    $action_key,
+                                    []
+                                ];
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -214,8 +223,11 @@ class KeyboardMap
         if ($type == 'button' && !empty($keyboard['icon']) && !empty($keyboard['text'])) {
             return trim(hex2bin($keyboard['icon']) . ' ' . $keyboard['text']);
         }
-        elseif ($type == 'inline' && !empty($keyboard['command'])) {
+        elseif ($type == 'command' && !empty($keyboard['command'])) {
              return trim($keyboard['command']);
+        }
+        elseif ($type == 'callback' && !empty($keyboard['callback'])) {
+             return trim($keyboard['callback']);
         }
 
         return false;
