@@ -15,7 +15,7 @@ class Callback extends Message implements IKeyboard
      */
 	public function getMessageId()
 	{
-        if (isset($this->data['message']['text'])) {
+        if (isset($this->data['callback_query']['message']['message_id'])) {
             return $this->data['callback_query']['message']['message_id'];
         }
 		return '';
