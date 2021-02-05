@@ -125,6 +125,24 @@ class ApiRequest
 	}
 
     /**
+     * Метод отправляет запрос к api телеграм бот <b>на удаление сообщения</b> для указанного пользователя
+     * @param int $chat_id <p>Уникальный id чата пользователя </p>
+     ** @param int $message_id <p>Уникальный id сообщения которое необходимо изменить</p>
+     * @return array|false
+     */
+	public function deleteMessage($chat_id, $message_id)
+	{
+		if(!empty($chat_id) && !empty($message_id)){
+			return $this->query('deleteMessage', [
+				'chat_id' => $chat_id,
+                'message_id' => $message_id,
+			]);
+		}
+
+		return false;
+	}
+
+    /**
      * Метод отправляет запрос к api телеграм бот на <b>установку кнопок</b> для указанного пользователя
      * @param int $chat_id <p>Уникальный id чата пользователя </p>
      * @param array $reply_markup <p>Массив состоящий из параметров для вывода кнопок у пользователя бота</p>
