@@ -122,7 +122,7 @@ class KeyboardMap
                                         return [
                                             static::backSlashesPathController($controller_key),
                                             $action_key,
-                                            $items
+                                            static::callbackParamsParse($items)
                                         ];
                                     }
                                 }
@@ -150,6 +150,25 @@ class KeyboardMap
         }
 
         return false;
+    }
+
+    /**
+     * Метод приводит параметры пришедшие от бота в понятный вид
+     * @param array $params
+     * @return array
+     */
+    public static function callbackParamsParse($params)
+    {
+        $result = [];
+        if (!empty($params)) {
+            foreach($params as $param) {
+                $param = explode("=", $param);
+                if (count($param) == 2) {
+                    $result[$param[0]] = $param[1];
+                }
+            }
+        }
+        return $result;
     }
 
     /**
