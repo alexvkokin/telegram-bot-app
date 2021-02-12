@@ -37,7 +37,8 @@ protected static $keyboardMap =
                 ["icon" => 'E29780', "text" => 'Назад', "controller" => "Tbot/TestApp/StartController", "action" => "actionStart"],
             ],
             "inline" => [
-                ["command" => '/profile']
+                ["command" => '/profile'],
+                ["callback" => 'profileGet']
             ]
         ],
         'actionMessage' => [
@@ -61,6 +62,38 @@ protected static $keyboardMap =
  - params - Дополнительные параметры для кнопки, например если мы хотим, чтобы при клике на кнопку в боте отправлялся контакт пользователя, в параметрах указываем `'params' => ["request_contact" => true]`
 
 `'inline'` - описываются inline команды, при выполнении из телеграм бота которых, будет запускаться метод `'actionStart'` соответствующего класса
+
+`'callback'` - события связанные с inline keyboard. В данном параметре мы прописываем название метода, который будет обрабатывать кнопки с callback_data
+Допустим у нас есть кнопка `"Вывести мои данные"`
+```php
+$keyboard = [
+    "inline_keyboard" => [
+        [
+            [
+                "text" => "Вывести мои данные",
+                "callback_data" => "profileGet|id=5|parent_id=1",
+            ],
+        ]
+    ]
+];
+```
+Чтобы на стороне сервера, было отловлено нажатие на данную кнопку, мы должны в карте кнопок указать какой контроллер и метод будет отлавливать данное событие. Для этого добавим следующую запись
+````php
+'Tbot/TestApp/ProfileController' => [
+    'actionIndex' => [
+        "inline" => [
+            ["callback" => 'profileGet']
+        ]
+    ]
+]
+````
+Тем самым мы указываем, что при клике на кнопку `"Вывести мои данные"`, будет выполнен метод `profileGet` контроллера `Tbot/TestApp/ProfileController`. Параметры `id=5|parent_id=1` будут доступны в поле `callbackParams` в виде массива
+```php
+[
+    'id' => 5,
+    'parent_id' => 1,
+]
+```
 
 `'message'` - Выше были описаны способы отлова событий по клику. Данный атрибут содержит название класса сообщения, которое будет отловлено и передано на обработку методу `'actionMessage'` класса `'Tbot/TestApp/ProfileController'`
 
