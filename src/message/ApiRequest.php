@@ -3,7 +3,7 @@ namespace Tbot\Message;
 
 class ApiRequest
 {
-	protected $url_prefix = 'https://api.telegram.org/bot';
+	protected $url_prefix = 'https://api.telegram.org';
 	protected $token;
 
     /**
@@ -19,11 +19,12 @@ class ApiRequest
      * Метод выполняет запрос к api telegram bot
      * @param string $method <p>Принимает название метода запроса к api, например sendMessage/sendVideo/getUpdates/editMessageText и др.</p>
      * @param null|array $params <p>Дополнительные параметры передаваемые к api</p>
+     * @param string $url_prefix <p>Дополнительные префикс к url, к примеру /file </p>
      * @return array
      */
-	protected function query($method, $params = null)
+	protected function query($method, $params = null, $url_prefix = '')
 	{
-		$url = "{$this->url_prefix}";
+		$url = "{$this->url_prefix}{$url_prefix}/bot";
 
 		$url .= "{$this->token}";
 
@@ -182,4 +183,45 @@ class ApiRequest
 		
 		return false;
 	}
+
+
+    /**
+     * Метод отправляет запрос к api телеграм бот на получение детальной информации по файлу, по его file_id
+     * @param $file_id
+     * @return array|false
+     */
+    public function getDocumentInfo($file_id)
+    {
+        if($file_id){
+            return $this->query('getFile', [
+                'file_id' => $file_id,
+            ]);
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Метод отправляет запрос к api телеграм бот на получение содержимого файла, по его file_id
+     * @param $file_id
+     * @return false|string
+     */
+    public function getDocument($file_id)
+    {
+        if($file_id){
+            $file_info = $this->getDocumentInfo($file_id);
+            if($file_info['http_code'] == 200){
+                $file_info_content = json_decode($file_info['content'], true);
+                if(!empty($file_info_content['result']['file_path'])){
+                    $file = $this->query($file_info_content['result']['file_path'], [], '/file');
+                    if($file['http_code'] == 200){
+                        return $file['content'];
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }

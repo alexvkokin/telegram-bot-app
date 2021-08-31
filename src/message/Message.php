@@ -59,6 +59,11 @@ class Message implements IMessage
                     if (isset($data['message']['text']) && isset($data['message']['entities'][0]['type']) && $data['message']['entities'][0]['type'] == 'bot_command') {
                         return new Keyboard($data_raw);
                     }
+
+                    //Files
+                    if (isset($data['message']['document']) && isset($data['message']['document']['file_id'])) {
+                        return new Document($data_raw);
+                    }
                 }
 
                 //callback запросы
